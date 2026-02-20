@@ -906,8 +906,6 @@ console.log('%c或按 Ctrl+Shift+R 打开记录面板', 'color: #666; font-size:
 
 function startBunnySpawner() {
   const bunny = document.getElementById('bunny');
-  let currentExpiredElement = null;
-  let currentExpiredDate = null;
   let currentBunnyType = null; // 'running' 或 'dancing'
   let checkInterval = null;
 
@@ -931,36 +929,16 @@ function startBunnySpawner() {
     const isDancing = Math.random() < 0.1;
     currentBunnyType = isDancing ? 'dancing' : 'running';
 
-    // 随机选择一个过期日期
-    const randomExpiredDate = expiredDates[Math.floor(Math.random() * expiredDates.length)];
-    currentExpiredDate = randomExpiredDate;
+    // 随机选择屏幕上的一行（Y坐标）
+    const maxY = window.innerHeight - 100;
+    const randomY = Math.random() * maxY;
 
-    // 找到对应的DOM元素
-    const allDayElements = document.querySelectorAll('.calendar-day');
-    let targetElement = null;
+    // 将小兔子放到body上，而不是格子上
+    document.body.appendChild(bunny);
 
-    allDayElements.forEach(element => {
-      const dateStr = element.getAttribute('data-date');
-      if (dateStr === randomExpiredDate) {
-        targetElement = element;
-      }
-    });
-
-    if (!targetElement) {
-      return;
-    }
-
-    // 移除之前的高亮
-    if (currentExpiredElement) {
-      currentExpiredElement.classList.remove('has-bunny');
-    }
-
-    currentExpiredElement = targetElement;
-    currentExpiredElement.classList.add('has-bunny');
-
-    // 将小兔子附着到这个格子上
-    currentExpiredElement.style.position = 'relative';
-    currentExpiredElement.appendChild(bunny);
+    // 设置位置
+    bunny.style.top = randomY + 'px';
+    bunny.style.left = '-100px'; // 从屏幕左侧开始
 
     // 添加动画类型
     bunny.classList.remove('running', 'dancing');
@@ -970,9 +948,6 @@ function startBunnySpawner() {
     setTimeout(() => {
       if (bunny.classList.contains('active')) {
         bunny.classList.remove('active', 'running', 'dancing');
-        if (currentExpiredElement) {
-          currentExpiredElement.classList.remove('has-bunny');
-        }
       }
     }, 5000);
   }
@@ -997,11 +972,6 @@ function startBunnySpawner() {
 
     // 显示提示
     showBunnyReward(isDancing);
-
-    // 移除高亮
-    if (currentExpiredElement) {
-      currentExpiredElement.classList.remove('has-bunny');
-    }
 
     // 动画结束后重置
     setTimeout(() => {

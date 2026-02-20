@@ -672,7 +672,7 @@ body {
 
 /* 小兔子 */
 .bunny {
-  position: absolute;
+  position: fixed;
   width: 80px;
   height: 80px;
   cursor: pointer;
@@ -693,7 +693,16 @@ body {
 
 /* 奔跑动画 */
 .bunny.running {
-  animation: runAroundBorder 4s linear infinite, runFrames 0.5s steps(15) infinite;
+  animation: runAcrossScreen 5s linear, runFrames 0.5s steps(15) infinite;
+}
+
+@keyframes runAcrossScreen {
+  0% {
+    left: -100px;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 @keyframes runFrames {
@@ -716,7 +725,7 @@ body {
 
 /* 跳舞动画 */
 .bunny.dancing {
-  animation: runAroundBorder 4s linear infinite, danceFrames 0.8s steps(15) infinite;
+  animation: runAcrossScreen 5s linear, danceFrames 0.8s steps(15) infinite;
 }
 
 @keyframes danceFrames {
@@ -735,33 +744,6 @@ body {
   80% { background-image: url('data/frames/dance/frame_012.png'); }
   86.67% { background-image: url('data/frames/dance/frame_013.png'); }
   93.33% { background-image: url('data/frames/dance/frame_014.png'); }
-}
-
-@keyframes runAroundBorder {
-  0% {
-    left: 0;
-    top: 0;
-  }
-  25% {
-    left: 100%;
-    top: 0;
-    transform: translateX(-100%) rotate(90deg);
-  }
-  50% {
-    left: 100%;
-    top: 100%;
-    transform: translateX(-100%) translateY(-100%) rotate(180deg);
-  }
-  75% {
-    left: 0;
-    top: 100%;
-    transform: translateY(-100%) rotate(270deg);
-  }
-  100% {
-    left: 0;
-    top: 0;
-    transform: rotate(360deg);
-  }
 }
 
 .bunny:hover {
