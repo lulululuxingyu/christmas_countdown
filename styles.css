@@ -672,32 +672,50 @@ body {
 
 /* 小兔子 */
 .bunny {
-  position: fixed;
-  font-size: 3em;
+  position: absolute;
+  font-size: 2em;
   cursor: pointer;
-  z-index: 9999;
+  z-index: 100;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s, transform 0.3s;
   user-select: none;
-  animation: bunnyHop 1s ease-in-out infinite;
+  transition: opacity 0.3s;
 }
 
 .bunny.active {
   opacity: 1;
   pointer-events: auto;
+  animation: runAroundBorder 4s linear infinite;
 }
 
 .bunny:hover {
-  transform: scale(1.2);
+  transform: scale(1.3);
 }
 
-@keyframes bunnyHop {
-  0%, 100% {
-    transform: translateY(0);
+@keyframes runAroundBorder {
+  0% {
+    left: 0;
+    top: 0;
+  }
+  25% {
+    left: 100%;
+    top: 0;
+    transform: translateX(-100%) rotate(90deg);
   }
   50% {
-    transform: translateY(-10px);
+    left: 100%;
+    top: 100%;
+    transform: translateX(-100%) translateY(-100%) rotate(180deg);
+  }
+  75% {
+    left: 0;
+    top: 100%;
+    transform: translateY(-100%) rotate(270deg);
+  }
+  100% {
+    left: 0;
+    top: 0;
+    transform: rotate(360deg);
   }
 }
 
@@ -715,6 +733,21 @@ body {
   100% {
     transform: scale(0) rotate(360deg);
     opacity: 0;
+  }
+}
+
+/* 过期格子高亮（有小兔子时） */
+.calendar-day.has-bunny {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  animation: bunnyGlow 2s ease-in-out infinite;
+}
+
+@keyframes bunnyGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 215, 0, 1);
   }
 }
 

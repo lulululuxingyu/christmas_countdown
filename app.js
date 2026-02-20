@@ -245,6 +245,7 @@ function createMonthContainer(monthData, today) {
 function createDayElement(dateStr, date, today) {
   const div = document.createElement('div');
   div.className = 'calendar-day';
+  div.setAttribute('data-date', dateStr); // 添加日期属性
 
   const dayNumber = date.getDate();
   const monthNumber = date.getMonth() + 1;
@@ -905,66 +906,99 @@ console.log('%c或按 Ctrl+Shift+R 打开记录面板', 'color: #666; font-size:
 
 function startBunnySpawner() {
   const bunny = document.getElementById('bunny');
-  let bunnyTimeout = null;
-  let hideTimeout = null;
+  let currentExpiredElement = null;
+  let currentExpiredDate = null;
 
   function spawnBunny() {
     // 只在登录后才出现小兔子
     if (!STATE.isLoggedIn) return;
 
-    // 随机位置
-    const maxX = window.innerWidth - 100;
-    const maxY = window.innerHeight - 100;
-    const x = Math.random() * maxX;
-    const y = Math.random() * maxY;
+    // 找到所有过期的日期格子
+    const expiredDates = Object.keys(STATE.expiredDays);
+    if (expiredDates.length === 0) {
+      // 没有过期日期，1分钟后再检查
+      setTimeout(spawnBunny, 60000);
+      return;
+    }
 
-    bunny.style.left = x + 'px';
-    bunny.style.top = y + 'px';
+    // 随机选择一个过期日期
+    const randomExpiredDate = expiredDates[Math.floor(Math.random() * expiredDates.length)];
+    currentExpiredDate = randomExpiredDate;
+
+    // 找到对应的DOM元素
+    const allDayElements = document.querySelectorAll('.calendar-day');
+    let targetElement = null;
+
+    allDayElements.forEach(element => {
+      const dateStr = element.getAttribute('data-date');
+      if (dateStr === randomExpiredDate) {
+        targetElement = element;
+      }
+    });
+
+    if (!targetElement) {
+      // 找不到元素，重试
+      setTimeout(spawnBunny, 5000);
+      return;
+    }
+
+    // 移除之前的高亮
+    if (currentExpiredElement) {
+      currentExpiredElement.classList.remove('has-bunny');
+    }
+
+    currentExpiredElement = targetElement;
+    currentExpiredElement.classList.add('has-bunny');
+
+    // 将小兔子附着到这个格子上
+    currentExpiredElement.style.position = 'relative';
+    currentExpiredElement.appendChild(bunny);
+
     bunny.classList.add('active');
-
-    // 测试模式：不自动消失
-    // 3-5秒后自动消失
-    // const hideDelay = 3000 + Math.random() * 2000;
-    // hideTimeout = setTimeout(() => {
-    //   bunny.classList.remove('active');
-    // }, hideDelay);
-
-    // 下次出现时间：30-60秒
-    // const nextSpawnDelay = 30000 + Math.random() * 30000;
-    // bunnyTimeout = setTimeout(spawnBunny, nextSpawnDelay);
   }
 
   // 点击小兔子
-  bunny.addEventListener('click', () => {
+  bunny.addEventListener('click', (e) => {
+    e.stopPropagation(); // 防止触发格子的点击事件
+
     if (!bunny.classList.contains('active')) return;
 
-    // 清除隐藏定时器
-    if (hideTimeout) clearTimeout(hideTimeout);
-
     // 播放捕获动画
+    bunny.classList.remove('active');
     bunny.classList.add('caught');
 
     // 增加解锁机会
     STATE.unlockChances++;
+
+    // 自动解锁这个过期日期
+    if (currentExpiredDate && STATE.expiredDays[currentExpiredDate]) {
+      delete STATE.expiredDays[currentExpiredDate];
+    }
+
     saveState();
     updateSidebar();
 
     // 显示提示
-    showBunnyReward();
+    showBunnyReward(currentExpiredDate);
 
-    // 动画结束后移除，然后重新生成
+    // 移除高亮
+    if (currentExpiredElement) {
+      currentExpiredElement.classList.remove('has-bunny');
+    }
+
+    // 动画结束后重新渲染日历并生成新的小兔子
     setTimeout(() => {
-      bunny.classList.remove('active', 'caught');
-      // 测试模式：立即重新生成
+      bunny.classList.remove('caught');
+      renderCalendar();
       setTimeout(spawnBunny, 1000);
     }, 500);
   });
 
   // 测试模式：立即出现
-  spawnBunny();
+  setTimeout(spawnBunny, 1000);
 }
 
-function showBunnyReward() {
+function showBunnyReward(dateStr) {
   // 创建临时提示元素
   const notification = document.createElement('div');
   notification.style.cssText = `
@@ -981,8 +1015,16 @@ function showBunnyReward() {
     z-index: 10000;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     animation: bounceIn 0.5s;
+    text-align: center;
   `;
-  notification.textContent = '🐰 抓到小兔子！获得1次解锁机会！';
+
+  const date = new Date(dateStr);
+  const dateDisplay = `${date.getMonth() + 1}月${date.getDate()}日`;
+
+  notification.innerHTML = `
+    🐰 抓到小兔子！<br>
+    <span style="font-size: 0.8em; color: #666;">已自动解锁 ${dateDisplay} 的礼物</span>
+  `;
 
   document.body.appendChild(notification);
 
