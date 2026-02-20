@@ -1,0 +1,15 @@
+# 管理员文档（不要公开）
+admin.md
+
+# 系统文件
+.DS_Store
+*.log
+
+# 编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 临时文件
+*.tmp

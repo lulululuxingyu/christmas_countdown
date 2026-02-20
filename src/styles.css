@@ -1,0 +1,672 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #0f4c3a 0%, #1a5c4a 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: #fff;
+}
+
+/* 雪花背景 */
+#snowCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 屏幕切换 */
+.screen {
+  display: none;
+  position: relative;
+  z-index: 10;
+}
+
+.screen.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* 登录界面 */
+.login-box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.login-box h1 {
+  color: #0f4c3a;
+  margin-bottom: 10px;
+  font-size: 2em;
+}
+
+.login-box p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  transition: border-color 0.3s;
+}
+
+.login-box input:focus {
+  outline: none;
+  border-color: #0f4c3a;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background: #0f4c3a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-box button:hover {
+  background: #1a5c4a;
+}
+
+.error-message {
+  color: #d32f2f;
+  margin-top: 10px;
+  font-size: 14px;
+  min-height: 20px;
+}
+
+.shake {
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+/* 日历主界面 */
+#calendarScreen {
+  padding: 20px;
+}
+
+#calendarScreen.active {
+  display: block;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.header h1 {
+  font-size: 2.5em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.logout-btn {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 主布局 */
+.main-layout {
+  display: flex;
+  gap: 20px;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* 侧边栏 */
+.sidebar {
+  width: 320px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 20px;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  position: sticky;
+  top: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s;
+}
+
+.sidebar.hidden {
+  transform: translateX(-100%);
+  position: fixed;
+  left: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #0f4c3a;
+}
+
+.sidebar-header h3 {
+  color: #0f4c3a;
+  font-size: 1.3em;
+  margin: 0;
+}
+
+.close-sidebar-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 30px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-sidebar-btn:hover {
+  color: #333;
+}
+
+.sidebar-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.stat-box {
+  background: #f5f5f5;
+  padding: 15px 10px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #0f4c3a;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.sidebar-gift-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-gift-item {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 10px;
+  border-left: 4px solid #0f4c3a;
+  transition: all 0.3s;
+}
+
+.sidebar-gift-item:hover {
+  background: #f0f0f0;
+  transform: translateX(5px);
+}
+
+.sidebar-gift-item.empty {
+  border-left-color: #999;
+  opacity: 0.7;
+}
+
+.sidebar-gift-item.exclusive {
+  border-left-color: #ffd700;
+  background: #fffbf0;
+}
+
+.sidebar-gift-date {
+  font-size: 0.85em;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.sidebar-gift-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-gift-icon {
+  font-size: 1.8em;
+}
+
+.sidebar-gift-text {
+  flex: 1;
+}
+
+.sidebar-gift-title {
+  font-weight: bold;
+  color: #333;
+  font-size: 0.9em;
+  margin-bottom: 3px;
+}
+
+.sidebar-gift-message {
+  font-size: 0.85em;
+  color: #666;
+}
+
+/* 日历网格 */
+.calendar-container {
+  flex: 1;
+  max-width: 1200px;
+}
+
+.calendar-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 20px;
+}
+
+/* 月份容器 */
+.month-container {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.month-title {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 星期标题 */
+.week-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.week-day-label {
+  text-align: center;
+  font-weight: bold;
+  color: #ffd700;
+  padding: 10px;
+  font-size: 0.9em;
+}
+
+/* 日期网格 */
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+/* 日历格子 */
+.calendar-day {
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.calendar-day.empty {
+  background: transparent;
+  cursor: default;
+  border: none;
+}
+
+.calendar-day:not(.empty):hover {
+  transform: translateY(-5px);
+}
+
+.calendar-day.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.calendar-day.locked:hover {
+  transform: none;
+}
+
+.calendar-day.empty:hover {
+  transform: none;
+}
+
+.calendar-day.available {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.2);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+  50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
+}
+
+.calendar-day.opened {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #4caf50;
+}
+
+.calendar-day.expired {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: #999;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.calendar-day.expired:hover {
+  transform: none;
+}
+
+.day-number {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.day-icon {
+  font-size: 2em;
+}
+
+.day-status {
+  font-size: 0.9em;
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+/* 礼物弹窗 */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  animation: modalSlideIn 0.5s;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 30px;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.gift-icon {
+  font-size: 5em;
+  margin-bottom: 20px;
+}
+
+.modal-content h2 {
+  color: #0f4c3a;
+  margin-bottom: 15px;
+  font-size: 2em;
+}
+
+.modal-content p {
+  color: #666;
+  font-size: 1.2em;
+  line-height: 1.6;
+}
+
+/* 记录弹窗 */
+.record-modal {
+  max-width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.record-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.stat-item {
+  text-align: left;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.9em;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  color: #0f4c3a;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.record-list {
+  margin-top: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.record-item {
+  background: #f9f9f9;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  text-align: left;
+  border-left: 4px solid #0f4c3a;
+}
+
+.record-item.empty {
+  border-left-color: #999;
+  opacity: 0.7;
+}
+
+.record-item.exclusive {
+  border-left-color: #ffd700;
+  background: #fffbf0;
+}
+
+.record-date {
+  color: #0f4c3a;
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 1.1em;
+}
+
+.record-gift {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.record-icon {
+  font-size: 2em;
+}
+
+.record-content {
+  flex: 1;
+}
+
+.record-title {
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.record-message {
+  color: #666;
+  font-size: 0.9em;
+}
+
+/* 彩带纸屑 */
+#confettiCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .main-layout {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 80%;
+    max-width: 320px;
+    height: 100vh;
+    max-height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%);
+    border-radius: 0;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .close-sidebar-btn {
+    display: block;
+  }
+
+  .calendar-grid {
+    gap: 20px;
+    padding: 10px;
+  }
+
+  .month-container {
+    padding: 15px;
+  }
+
+  .month-title {
+    font-size: 1.4em;
+  }
+
+  .days-grid {
+    gap: 5px;
+  }
+
+  .week-day-label {
+    font-size: 0.8em;
+    padding: 5px;
+  }
+
+  .day-number {
+    font-size: 1.2em;
+  }
+
+  .day-icon {
+    font-size: 1.5em;
+  }
+
+  .day-status {
+    font-size: 0.7em;
+  }
+
+  .header h1 {
+    font-size: 1.8em;
+  }
+
+  .logout-btn {
+    position: static;
+    margin-top: 10px;
+  }
+}
+
