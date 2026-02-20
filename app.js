@@ -922,15 +922,16 @@ function startBunnySpawner() {
     bunny.style.top = y + 'px';
     bunny.classList.add('active');
 
+    // 测试模式：不自动消失
     // 3-5秒后自动消失
-    const hideDelay = 3000 + Math.random() * 2000;
-    hideTimeout = setTimeout(() => {
-      bunny.classList.remove('active');
-    }, hideDelay);
+    // const hideDelay = 3000 + Math.random() * 2000;
+    // hideTimeout = setTimeout(() => {
+    //   bunny.classList.remove('active');
+    // }, hideDelay);
 
     // 下次出现时间：30-60秒
-    const nextSpawnDelay = 30000 + Math.random() * 30000;
-    bunnyTimeout = setTimeout(spawnBunny, nextSpawnDelay);
+    // const nextSpawnDelay = 30000 + Math.random() * 30000;
+    // bunnyTimeout = setTimeout(spawnBunny, nextSpawnDelay);
   }
 
   // 点击小兔子
@@ -951,15 +952,16 @@ function startBunnySpawner() {
     // 显示提示
     showBunnyReward();
 
-    // 动画结束后移除
+    // 动画结束后移除，然后重新生成
     setTimeout(() => {
       bunny.classList.remove('active', 'caught');
+      // 测试模式：立即重新生成
+      setTimeout(spawnBunny, 1000);
     }, 500);
   });
 
-  // 开始生成小兔子（5秒后第一次出现，方便测试）
-  const initialDelay = 5000;
-  bunnyTimeout = setTimeout(spawnBunny, initialDelay);
+  // 测试模式：立即出现
+  spawnBunny();
 }
 
 function showBunnyReward() {
