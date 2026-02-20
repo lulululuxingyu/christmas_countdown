@@ -967,29 +967,23 @@ function startBunnySpawner() {
     bunny.classList.remove('active');
     bunny.classList.add('caught');
 
-    // 增加解锁机会
+    // 增加解锁机会（不直接解锁日期）
     STATE.unlockChances++;
-
-    // 自动解锁这个过期日期
-    if (currentExpiredDate && STATE.expiredDays[currentExpiredDate]) {
-      delete STATE.expiredDays[currentExpiredDate];
-    }
 
     saveState();
     updateSidebar();
 
     // 显示提示
-    showBunnyReward(currentExpiredDate);
+    showBunnyReward();
 
     // 移除高亮
     if (currentExpiredElement) {
       currentExpiredElement.classList.remove('has-bunny');
     }
 
-    // 动画结束后重新渲染日历并生成新的小兔子
+    // 动画结束后重新生成新的小兔子
     setTimeout(() => {
       bunny.classList.remove('caught');
-      renderCalendar();
       setTimeout(spawnBunny, 1000);
     }, 500);
   });
@@ -998,7 +992,7 @@ function startBunnySpawner() {
   setTimeout(spawnBunny, 1000);
 }
 
-function showBunnyReward(dateStr) {
+function showBunnyReward() {
   // 创建临时提示元素
   const notification = document.createElement('div');
   notification.style.cssText = `
@@ -1018,12 +1012,9 @@ function showBunnyReward(dateStr) {
     text-align: center;
   `;
 
-  const date = new Date(dateStr);
-  const dateDisplay = `${date.getMonth() + 1}月${date.getDate()}日`;
-
   notification.innerHTML = `
     🐰 抓到小兔子！<br>
-    <span style="font-size: 0.8em; color: #666;">已自动解锁 ${dateDisplay} 的礼物</span>
+    <span style="font-size: 0.8em; color: #666;">获得1次解锁机会</span>
   `;
 
   document.body.appendChild(notification);
