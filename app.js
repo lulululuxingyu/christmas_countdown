@@ -4,7 +4,8 @@ const STATE = {
   openedDays: {}, // { "2025-01-29": { gift: {...}, timestamp: ... } }
   usedExclusiveGifts: [], // 已使用的贵重礼物ID
   emptyCount: 0, // 连续空礼物计数（保底机制）
-  expiredDays: {} // 过期的日期 { "2025-01-29": true }
+  expiredDays: {}, // 过期的日期 { "2025-01-29": true }
+  unlockChances: 0 // 解锁过期礼物的机会次数
 };
 
 // ==================== 工具函数 ====================
@@ -45,6 +46,7 @@ function loadState() {
     STATE.usedExclusiveGifts = parsed.usedExclusiveGifts || [];
     STATE.emptyCount = parsed.emptyCount || 0;
     STATE.expiredDays = parsed.expiredDays || {};
+    STATE.unlockChances = parsed.unlockChances || 0;
   }
 }
 
@@ -54,7 +56,8 @@ function saveState() {
     openedDays: STATE.openedDays,
     usedExclusiveGifts: STATE.usedExclusiveGifts,
     emptyCount: STATE.emptyCount,
-    expiredDays: STATE.expiredDays
+    expiredDays: STATE.expiredDays,
+    unlockChances: STATE.unlockChances
   }));
 }
 
@@ -123,6 +126,9 @@ function initCalendar() {
       showRecordModal();
     }
   });
+
+  // 启动小兔子
+  startBunnySpawner();
 }
 
 // 标记过期日期
@@ -430,6 +436,7 @@ function updateSidebar() {
   document.getElementById('sidebarOpenedCount').textContent = openedDates.length;
   document.getElementById('sidebarExclusiveCount').textContent = exclusiveCount;
   document.getElementById('sidebarPityCount').textContent = `${STATE.emptyCount}/7`;
+  document.getElementById('sidebarUnlockChances').textContent = STATE.unlockChances;
 
   // 更新礼物列表
   const giftList = document.getElementById('sidebarGiftList');
@@ -893,3 +900,159 @@ window.adminPanel = {
 console.log('%c🎄 管理员工具已加载', 'color: #0f4c3a; font-size: 16px; font-weight: bold;');
 console.log('%c输入 adminPanel.help() 查看可用命令', 'color: #666; font-size: 12px;');
 console.log('%c或按 Ctrl+Shift+R 打开记录面板', 'color: #666; font-size: 12px;');
+
+// ==================== 小兔子功能 ====================
+
+function startBunnySpawner() {
+  const bunny = document.getElementById('bunny');
+  let bunnyTimeout = null;
+  let hideTimeout = null;
+
+  function spawnBunny() {
+    // 只在登录后才出现小兔子
+    if (!STATE.isLoggedIn) return;
+
+    // 随机位置
+    const maxX = window.innerWidth - 100;
+    const maxY = window.innerHeight - 100;
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+
+    bunny.style.left = x + 'px';
+    bunny.style.top = y + 'px';
+    bunny.classList.add('active');
+
+    // 3-5秒后自动消失
+    const hideDelay = 3000 + Math.random() * 2000;
+    hideTimeout = setTimeout(() => {
+      bunny.classList.remove('active');
+    }, hideDelay);
+
+    // 下次出现时间：30-60秒
+    const nextSpawnDelay = 30000 + Math.random() * 30000;
+    bunnyTimeout = setTimeout(spawnBunny, nextSpawnDelay);
+  }
+
+  // 点击小兔子
+  bunny.addEventListener('click', () => {
+    if (!bunny.classList.contains('active')) return;
+
+    // 清除隐藏定时器
+    if (hideTimeout) clearTimeout(hideTimeout);
+
+    // 播放捕获动画
+    bunny.classList.add('caught');
+
+    // 增加解锁机会
+    STATE.unlockChances++;
+    saveState();
+    updateSidebar();
+
+    // 显示提示
+    showBunnyReward();
+
+    // 动画结束后移除
+    setTimeout(() => {
+      bunny.classList.remove('active', 'caught');
+    }, 500);
+  });
+
+  // 开始生成小兔子（5秒后第一次出现，方便测试）
+  const initialDelay = 5000;
+  bunnyTimeout = setTimeout(spawnBunny, initialDelay);
+}
+
+function showBunnyReward() {
+  // 创建临时提示元素
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 215, 0, 0.95);
+    color: #333;
+    padding: 30px 50px;
+    border-radius: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+    z-index: 10000;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: bounceIn 0.5s;
+  `;
+  notification.textContent = '🐰 抓到小兔子！获得1次解锁机会！';
+
+  document.body.appendChild(notification);
+
+  // 2秒后移除
+  setTimeout(() => {
+    notification.style.animation = 'fadeOut 0.5s';
+    setTimeout(() => notification.remove(), 500);
+  }, 2000);
+}
+
+// 修改handleDayClick，支持使用解锁机会
+const originalHandleDayClick = handleDayClick;
+function handleDayClick(dateStr, element) {
+  const date = new Date(dateStr);
+  const today = new Date(getTodayString());
+
+  // 检查是否已开启
+  if (STATE.openedDays[dateStr]) {
+    showGift(STATE.openedDays[dateStr].gift);
+    return;
+  }
+
+  // 检查是否已过期
+  if (STATE.expiredDays[dateStr]) {
+    // 如果有解锁机会，询问是否使用
+    if (STATE.unlockChances > 0) {
+      if (confirm(`这个礼物已经过期了。\n\n你有 ${STATE.unlockChances} 次解锁机会，是否使用一次来解锁这个礼物？`)) {
+        // 使用解锁机会
+        STATE.unlockChances--;
+        delete STATE.expiredDays[dateStr];
+        saveState();
+        updateSidebar();
+        renderCalendar();
+        alert('✨ 解锁成功！现在可以开启这个礼物了。');
+        return;
+      }
+    } else {
+      alert('⏰ 这个礼物已经过期了，无法开启！\n\n💡 提示：抓住页面上随机出现的小兔子🐰可以获得解锁机会哦！');
+    }
+    return;
+  }
+
+  // 检查是否可以开启
+  if (date > today) {
+    alert('🎅 还没到时间哦，再等等吧！');
+    return;
+  }
+
+  // 获取礼物
+  const gift = getGiftForDate(dateStr);
+
+  // 保存状态
+  STATE.openedDays[dateStr] = {
+    gift: gift,
+    timestamp: Date.now()
+  };
+  saveState();
+
+  // 更新UI
+  element.classList.remove('available');
+  element.classList.add('opened');
+  element.querySelector('.day-icon').textContent = '✅';
+  element.querySelector('.day-status').textContent = '已开启';
+
+  // 显示礼物
+  showGift(gift);
+
+  // 只有非空礼物才触发彩带纸屑
+  if (!gift.isEmpty) {
+    triggerConfetti();
+  }
+
+  // 更新侧边栏
+  updateSidebar();
+}
