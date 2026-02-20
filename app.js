@@ -1015,20 +1015,6 @@ function startBunnySpawner() {
   // 立即检查一次（测试用）
   setTimeout(checkAndSpawnBunny, 2000);
 }
-    if (currentExpiredElement) {
-      currentExpiredElement.classList.remove('has-bunny');
-    }
-
-    // 动画结束后重新生成新的小兔子
-    setTimeout(() => {
-      bunny.classList.remove('caught');
-      setTimeout(spawnBunny, 1000);
-    }, 500);
-  });
-
-  // 测试模式：立即出现
-  setTimeout(spawnBunny, 1000);
-}
 
 function showBunnyReward(isDancing) {
   // 创建临时提示元素
