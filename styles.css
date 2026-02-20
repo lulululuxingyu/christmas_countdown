@@ -673,23 +673,68 @@ body {
 /* 小兔子 */
 .bunny {
   position: absolute;
-  font-size: 2em;
+  width: 80px;
+  height: 80px;
   cursor: pointer;
   z-index: 100;
   opacity: 0;
   pointer-events: none;
   user-select: none;
   transition: opacity 0.3s;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .bunny.active {
   opacity: 1;
   pointer-events: auto;
-  animation: runAroundBorder 4s linear infinite;
 }
 
-.bunny:hover {
-  transform: scale(1.3);
+/* 奔跑动画 */
+.bunny.running {
+  animation: runAroundBorder 4s linear infinite, runFrames 0.5s steps(15) infinite;
+}
+
+@keyframes runFrames {
+  0% { background-image: url('data/frames/run/frame_000.png'); }
+  6.67% { background-image: url('data/frames/run/frame_001.png'); }
+  13.33% { background-image: url('data/frames/run/frame_002.png'); }
+  20% { background-image: url('data/frames/run/frame_003.png'); }
+  26.67% { background-image: url('data/frames/run/frame_004.png'); }
+  33.33% { background-image: url('data/frames/run/frame_005.png'); }
+  40% { background-image: url('data/frames/run/frame_006.png'); }
+  46.67% { background-image: url('data/frames/run/frame_007.png'); }
+  53.33% { background-image: url('data/frames/run/frame_008.png'); }
+  60% { background-image: url('data/frames/run/frame_009.png'); }
+  66.67% { background-image: url('data/frames/run/frame_010.png'); }
+  73.33% { background-image: url('data/frames/run/frame_011.png'); }
+  80% { background-image: url('data/frames/run/frame_012.png'); }
+  86.67% { background-image: url('data/frames/run/frame_013.png'); }
+  93.33% { background-image: url('data/frames/run/frame_014.png'); }
+}
+
+/* 跳舞动画 */
+.bunny.dancing {
+  animation: runAroundBorder 4s linear infinite, danceFrames 0.8s steps(15) infinite;
+}
+
+@keyframes danceFrames {
+  0% { background-image: url('data/frames/dance/frame_000.png'); }
+  6.67% { background-image: url('data/frames/dance/frame_001.png'); }
+  13.33% { background-image: url('data/frames/dance/frame_002.png'); }
+  20% { background-image: url('data/frames/dance/frame_003.png'); }
+  26.67% { background-image: url('data/frames/dance/frame_004.png'); }
+  33.33% { background-image: url('data/frames/dance/frame_005.png'); }
+  40% { background-image: url('data/frames/dance/frame_006.png'); }
+  46.67% { background-image: url('data/frames/dance/frame_007.png'); }
+  53.33% { background-image: url('data/frames/dance/frame_008.png'); }
+  60% { background-image: url('data/frames/dance/frame_009.png'); }
+  66.67% { background-image: url('data/frames/dance/frame_010.png'); }
+  73.33% { background-image: url('data/frames/dance/frame_011.png'); }
+  80% { background-image: url('data/frames/dance/frame_012.png'); }
+  86.67% { background-image: url('data/frames/dance/frame_013.png'); }
+  93.33% { background-image: url('data/frames/dance/frame_014.png'); }
 }
 
 @keyframes runAroundBorder {
@@ -717,6 +762,10 @@ body {
     top: 0;
     transform: rotate(360deg);
   }
+}
+
+.bunny:hover {
+  transform: scale(1.3);
 }
 
 .bunny.caught {

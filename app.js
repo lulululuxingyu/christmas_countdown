@@ -908,18 +908,28 @@ function startBunnySpawner() {
   const bunny = document.getElementById('bunny');
   let currentExpiredElement = null;
   let currentExpiredDate = null;
+  let currentBunnyType = null; // 'running' 或 'dancing'
+  let checkInterval = null;
 
-  function spawnBunny() {
+  function checkAndSpawnBunny() {
     // 只在登录后才出现小兔子
     if (!STATE.isLoggedIn) return;
 
     // 找到所有过期的日期格子
     const expiredDates = Object.keys(STATE.expiredDays);
     if (expiredDates.length === 0) {
-      // 没有过期日期，1分钟后再检查
-      setTimeout(spawnBunny, 60000);
+      // 没有过期日期，30秒后再检查
       return;
     }
+
+    // 10%概率出现小兔子
+    if (Math.random() > 0.1) {
+      return;
+    }
+
+    // 决定兔子类型：90%奔跑，10%跳舞
+    const isDancing = Math.random() < 0.1;
+    currentBunnyType = isDancing ? 'dancing' : 'running';
 
     // 随机选择一个过期日期
     const randomExpiredDate = expiredDates[Math.floor(Math.random() * expiredDates.length)];
@@ -937,8 +947,6 @@ function startBunnySpawner() {
     });
 
     if (!targetElement) {
-      // 找不到元素，重试
-      setTimeout(spawnBunny, 5000);
       return;
     }
 
@@ -954,7 +962,19 @@ function startBunnySpawner() {
     currentExpiredElement.style.position = 'relative';
     currentExpiredElement.appendChild(bunny);
 
-    bunny.classList.add('active');
+    // 添加动画类型
+    bunny.classList.remove('running', 'dancing');
+    bunny.classList.add('active', currentBunnyType);
+
+    // 5秒后自动消失
+    setTimeout(() => {
+      if (bunny.classList.contains('active')) {
+        bunny.classList.remove('active', 'running', 'dancing');
+        if (currentExpiredElement) {
+          currentExpiredElement.classList.remove('has-bunny');
+        }
+      }
+    }, 5000);
   }
 
   // 点击小兔子
@@ -964,19 +984,37 @@ function startBunnySpawner() {
     if (!bunny.classList.contains('active')) return;
 
     // 播放捕获动画
-    bunny.classList.remove('active');
+    bunny.classList.remove('active', 'running', 'dancing');
     bunny.classList.add('caught');
 
-    // 增加解锁机会（不直接解锁日期）
-    STATE.unlockChances++;
+    // 根据兔子类型增加解锁机会
+    const isDancing = currentBunnyType === 'dancing';
+    const chances = isDancing ? 2 : 1;
+    STATE.unlockChances += chances;
 
     saveState();
     updateSidebar();
 
     // 显示提示
-    showBunnyReward();
+    showBunnyReward(isDancing);
 
     // 移除高亮
+    if (currentExpiredElement) {
+      currentExpiredElement.classList.remove('has-bunny');
+    }
+
+    // 动画结束后重置
+    setTimeout(() => {
+      bunny.classList.remove('caught');
+    }, 500);
+  });
+
+  // 每30秒检查一次是否出现小兔子
+  checkInterval = setInterval(checkAndSpawnBunny, 30000);
+
+  // 立即检查一次（测试用）
+  setTimeout(checkAndSpawnBunny, 2000);
+}
     if (currentExpiredElement) {
       currentExpiredElement.classList.remove('has-bunny');
     }
@@ -992,7 +1030,7 @@ function startBunnySpawner() {
   setTimeout(spawnBunny, 1000);
 }
 
-function showBunnyReward() {
+function showBunnyReward(isDancing) {
   // 创建临时提示元素
   const notification = document.createElement('div');
   notification.style.cssText = `
@@ -1012,9 +1050,12 @@ function showBunnyReward() {
     text-align: center;
   `;
 
+  const chances = isDancing ? 2 : 1;
+  const bunnyType = isDancing ? '💃 扭屁股兔子' : '🏃 奔跑兔子';
+
   notification.innerHTML = `
-    🐰 抓到小兔子！<br>
-    <span style="font-size: 0.8em; color: #666;">获得1次解锁机会</span>
+    🐰 抓到${bunnyType}！<br>
+    <span style="font-size: 0.8em; color: #666;">获得${chances}次解锁机会</span>
   `;
 
   document.body.appendChild(notification);
