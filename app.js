@@ -922,10 +922,10 @@ function startBunnySpawner() {
       return;
     }
 
-    // 10%概率出现小兔子
-    if (Math.random() > 0.1) {
-      return;
-    }
+    // 100%概率出现小兔子（调试模式）
+    // if (Math.random() > 0.1) {
+    //   return;
+    // }
 
     // 决定兔子类型：90%奔跑，10%跳舞
     const isDancing = Math.random() < 0.1;
