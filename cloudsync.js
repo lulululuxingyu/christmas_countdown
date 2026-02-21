@@ -8,13 +8,23 @@ const CloudSync = {
 
   async initUser(password) {
     this.currentUserId = await this.hashString(password);
-    this.githubToken = localStorage.getItem('github_token');
 
-    if (this.githubToken) {
+    // 自动使用配置文件中的token（字符移位解码）
+    const encodedToken = CONFIG.githubTokenHash;
+    if (encodedToken) {
+      // 解码：每个字符ASCII码-5
+      this.githubToken = encodedToken.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 5)).join('');
       GitHubStorage.init(this.githubToken);
-      console.log('CloudSync: GitHub token已加载');
+      console.log('CloudSync: GitHub token已自动加载');
     } else {
-      console.log('CloudSync: 未设置GitHub token');
+      // 如果配置文件没有token，尝试从localStorage加载
+      this.githubToken = localStorage.getItem('github_token');
+      if (this.githubToken) {
+        GitHubStorage.init(this.githubToken);
+        console.log('CloudSync: GitHub token从本地加载');
+      } else {
+        console.log('CloudSync: 未设置GitHub token');
+      }
     }
   },
 

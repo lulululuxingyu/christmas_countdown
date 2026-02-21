@@ -14,7 +14,9 @@
       "Bash(python3:*)",
       "Bash(pip3 install:*)",
       "Bash(chmod:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(/Users/xingyulu/Desktop/agent/gift_countdown/styles.css:*)",
+      "Bash(/Users/xingyulu/Desktop/agent/gift_countdown/app.js:*)"
     ]
   }
 }
