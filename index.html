@@ -25,6 +25,7 @@
   <div id="calendarScreen" class="screen">
     <div class="header">
       <h1>🎄 lxy的倒数日历</h1>
+      <button id="settingsBtn" class="settings-btn" title="设置">⚙️</button>
       <button id="logoutBtn" class="logout-btn">退出</button>
     </div>
 
@@ -102,6 +103,34 @@
     </div>
   </div>
 
+  <!-- 设置弹窗 -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="settingsCloseBtn">&times;</span>
+      <h2>⚙️ GitHub同步设置</h2>
+      <p>设置GitHub Token以启用云端数据同步</p>
+
+      <div class="settings-section">
+        <label for="githubTokenInput">GitHub Personal Access Token:</label>
+        <input type="password" id="githubTokenInput" placeholder="ghp_xxxxxxxxxxxx">
+        <button id="saveTokenBtn">保存Token</button>
+        <div id="tokenStatus"></div>
+      </div>
+
+      <div class="settings-info">
+        <h3>如何获取Token？</h3>
+        <ol>
+          <li>访问 <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings → Tokens</a></li>
+          <li>点击 "Generate new token (classic)"</li>
+          <li>勾选 "repo" 权限</li>
+          <li>生成并复制token</li>
+          <li>粘贴到上方并保存</li>
+        </ol>
+        <p class="warning">⚠️ Token保存在本地浏览器，请勿分享</p>
+      </div>
+    </div>
+  </div>
+
   <!-- 彩带纸屑容器 -->
   <canvas id="confettiCanvas"></canvas>
 
@@ -109,7 +138,7 @@
   <div id="bunny" class="bunny"></div>
 
   <script src="data/config.js"></script>
-  <script src="cloudbase.js"></script>
+  <script src="github-storage.js"></script>
   <script src="cloudsync.js"></script>
   <script src="app.js"></script>
 </body>

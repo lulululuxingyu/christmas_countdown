@@ -141,6 +141,12 @@ async function initCalendar() {
     showScreen('loginScreen');
   });
 
+  // 设置按钮
+  const settingsBtn = document.getElementById('settingsBtn');
+  settingsBtn.addEventListener('click', () => {
+    showSettingsModal();
+  });
+
   // 移动端侧边栏关闭按钮
   const closeSidebarBtn = document.getElementById('closeSidebarBtn');
   const sidebar = document.getElementById('sidebar');
@@ -1126,4 +1132,57 @@ function handleDayClick(dateStr, element) {
 
   // 更新侧边栏
   updateSidebar();
+}
+
+// ==================== 设置模块 ====================
+
+function showSettingsModal() {
+  const modal = document.getElementById('settingsModal');
+  const closeBtn = document.getElementById('settingsCloseBtn');
+  const saveBtn = document.getElementById('saveTokenBtn');
+  const tokenInput = document.getElementById('githubTokenInput');
+  const tokenStatus = document.getElementById('tokenStatus');
+
+  // 显示当前token状态
+  const currentToken = localStorage.getItem('github_token');
+  if (currentToken) {
+    tokenInput.value = currentToken;
+    tokenStatus.textContent = '✅ Token已设置';
+    tokenStatus.className = 'success';
+  }
+
+  modal.style.display = 'flex';
+
+  closeBtn.onclick = () => {
+    modal.style.display = 'none';
+  };
+
+  saveBtn.onclick = async () => {
+    const token = tokenInput.value.trim();
+    if (!token) {
+      tokenStatus.textContent = '❌ 请输入Token';
+      tokenStatus.className = 'error';
+      return;
+    }
+
+    // 保存token
+    CloudSync.setGitHubToken(token);
+    tokenStatus.textContent = '✅ Token已保存！数据将同步到GitHub';
+    tokenStatus.className = 'success';
+
+    // 尝试保存当前状态
+    try {
+      await saveState();
+      tokenStatus.textContent = '✅ Token已保存并同步成功！';
+    } catch (error) {
+      tokenStatus.textContent = '⚠️ Token已保存，但同步失败。请检查token权限';
+      tokenStatus.className = 'error';
+    }
+  };
+
+  window.onclick = (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  };
 }
