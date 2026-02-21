@@ -929,7 +929,7 @@ function startBunnySpawner() {
     const isDancing = Math.random() < 0.1;
     currentBunnyType = isDancing ? 'dancing' : 'running';
 
-    // 随机选择屏幕上的一行（Y坐标）
+    // 随机选择屏幕上的位置
     const maxY = window.innerHeight - 100;
     const randomY = Math.random() * maxY;
 
@@ -938,7 +938,16 @@ function startBunnySpawner() {
 
     // 设置位置
     bunny.style.top = randomY + 'px';
-    bunny.style.left = '-100px'; // 从屏幕左侧开始
+
+    if (isDancing) {
+      // 跳舞的兔子：随机出现在屏幕中间某个位置
+      const maxX = window.innerWidth - 100;
+      const randomX = Math.random() * maxX;
+      bunny.style.left = randomX + 'px';
+    } else {
+      // 奔跑的兔子：从屏幕左侧开始
+      bunny.style.left = '-100px';
+    }
 
     // 添加动画类型
     bunny.classList.remove('running', 'dancing');

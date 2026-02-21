@@ -725,7 +725,7 @@ body {
 
 /* 跳舞动画 */
 .bunny.dancing {
-  animation: runAcrossScreen 5s linear, danceFrames 0.8s steps(15) infinite;
+  animation: danceFrames 0.8s steps(15) infinite;
 }
 
 @keyframes danceFrames {
