@@ -37,10 +37,11 @@ function daysBetween(date1Str, date2Str) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-// 从CloudBase和localStorage加载状态
+// 从GitHub和localStorage加载状态
 async function loadState() {
   // 先从localStorage加载（作为备份）
   const saved = localStorage.getItem('giftCalendarState');
+  let hasLocalData = false;
   if (saved) {
     const parsed = JSON.parse(saved);
     STATE.openedDays = parsed.openedDays || {};
@@ -48,9 +49,10 @@ async function loadState() {
     STATE.emptyCount = parsed.emptyCount || 0;
     STATE.expiredDays = parsed.expiredDays || {};
     STATE.unlockChances = parsed.unlockChances || 0;
+    hasLocalData = Object.keys(STATE.openedDays).length > 0;
   }
 
-  // 尝试从CloudBase加载（优先使用云端数据）
+  // 尝试从GitHub加载（优先使用云端数据）
   try {
     const cloudData = await CloudSync.loadState();
     if (cloudData) {
@@ -60,6 +62,11 @@ async function loadState() {
       STATE.expiredDays = cloudData.expiredDays || {};
       STATE.unlockChances = cloudData.unlockChances || 0;
       console.log('✅ 已从云端加载数据');
+    } else if (hasLocalData) {
+      // GitHub没有数据但localStorage有数据，迁移到GitHub
+      console.log('🔄 检测到本地数据，正在迁移到GitHub...');
+      await saveState();
+      console.log('✅ 数据已迁移到GitHub');
     }
   } catch (error) {
     console.warn('⚠️ 云端加载失败，使用本地数据', error);
