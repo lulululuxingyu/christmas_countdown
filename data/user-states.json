@@ -1,0 +1,14 @@
+{
+  "c4ea911f6c28bccab0a79bb8ba11c69ba2315f02d4f88f3f912a3ed822014816": {
+    "openedDays": {},
+    "usedExclusiveGifts": [],
+    "emptyCount": 0,
+    "expiredDays": {
+      "2026-02-18": true,
+      "2026-02-19": true,
+      "2026-02-20": true
+    },
+    "unlockChances": 0,
+    "lastUpdated": "2026-02-21T03:54:46.214Z"
+  }
+}
