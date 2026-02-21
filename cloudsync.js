@@ -14,6 +14,8 @@ const CloudSync = {
     if (encodedToken) {
       // 解码：每个字符ASCII码-5
       this.githubToken = encodedToken.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 5)).join('');
+      console.log('CloudSync: 解码后的token:', this.githubToken);
+      console.log('CloudSync: Token长度:', this.githubToken.length);
       GitHubStorage.init(this.githubToken);
       console.log('CloudSync: GitHub token已自动加载');
     } else {
