@@ -5,8 +5,8 @@ const CONFIG = {
   // 登录密码（Base64编码：lxy-tz）
   passwordHash: "bHh5LXR6",
 
-  // GitHub Token（字符移位加密）
-  githubTokenHash: "lmudOKJ>st9T\\HzgN:=x~<7yXM{HvPNqP5M;;wi",
+  // GitHub Token（反转+Base64编码）
+  githubTokenHash: "ZHI2NkgwS2xJS3FDdkhTdDI3eXM4NUlidUNXTzRvbjl6RUZKX3BoZw==",
 
   // 贵重礼物池：每个只能出现一次
   exclusiveGifts: [

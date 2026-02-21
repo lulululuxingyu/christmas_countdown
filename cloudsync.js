@@ -9,11 +9,12 @@ const CloudSync = {
   async initUser(password) {
     this.currentUserId = await this.hashString(password);
 
-    // 自动使用配置文件中的token（字符移位解码）
+    // 自动使用配置文件中的token（反转+Base64解码）
     const encodedToken = CONFIG.githubTokenHash;
     if (encodedToken) {
-      // 解码：每个字符ASCII码-5
-      this.githubToken = encodedToken.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 5)).join('');
+      // 解码：Base64解码后反转字符串
+      const decoded = atob(encodedToken);
+      this.githubToken = decoded.split('').reverse().join('');
       console.log('CloudSync: 解码后的token:', this.githubToken);
       console.log('CloudSync: Token长度:', this.githubToken.length);
       GitHubStorage.init(this.githubToken);
