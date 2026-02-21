@@ -37,8 +37,9 @@ function daysBetween(date1Str, date2Str) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-// 从localStorage加载状态
-function loadState() {
+// 从CloudBase和localStorage加载状态
+async function loadState() {
+  // 先从localStorage加载（作为备份）
   const saved = localStorage.getItem('giftCalendarState');
   if (saved) {
     const parsed = JSON.parse(saved);
@@ -48,17 +49,43 @@ function loadState() {
     STATE.expiredDays = parsed.expiredDays || {};
     STATE.unlockChances = parsed.unlockChances || 0;
   }
+
+  // 尝试从CloudBase加载（优先使用云端数据）
+  try {
+    const cloudData = await CloudSync.loadState();
+    if (cloudData) {
+      STATE.openedDays = cloudData.openedDays || {};
+      STATE.usedExclusiveGifts = cloudData.usedExclusiveGifts || [];
+      STATE.emptyCount = cloudData.emptyCount || 0;
+      STATE.expiredDays = cloudData.expiredDays || {};
+      STATE.unlockChances = cloudData.unlockChances || 0;
+      console.log('✅ 已从云端加载数据');
+    }
+  } catch (error) {
+    console.warn('⚠️ 云端加载失败，使用本地数据', error);
+  }
 }
 
-// 保存状态到localStorage
-function saveState() {
-  localStorage.setItem('giftCalendarState', JSON.stringify({
+// 保存状态到CloudBase和localStorage
+async function saveState() {
+  const stateData = {
     openedDays: STATE.openedDays,
     usedExclusiveGifts: STATE.usedExclusiveGifts,
     emptyCount: STATE.emptyCount,
     expiredDays: STATE.expiredDays,
     unlockChances: STATE.unlockChances
-  }));
+  };
+
+  // 保存到localStorage（作为备份）
+  localStorage.setItem('giftCalendarState', JSON.stringify(stateData));
+
+  // 保存到CloudBase
+  try {
+    await CloudSync.saveState(STATE);
+    console.log('✅ 已同步到云端');
+  } catch (error) {
+    console.warn('⚠️ 云端同步失败', error);
+  }
 }
 
 // ==================== 登录模块 ====================
@@ -74,7 +101,7 @@ function initLogin() {
   });
 }
 
-function handleLogin() {
+async function handleLogin() {
   const passwordInput = document.getElementById('passwordInput');
   const loginError = document.getElementById('loginError');
   const loginBox = document.querySelector('.login-box');
@@ -87,9 +114,12 @@ function handleLogin() {
   console.log('密码匹配:', inputPassword === correctPassword);
 
   if (inputPassword === correctPassword) {
+    // 初始化CloudSync
+    await CloudSync.initUser(inputPassword);
+
     STATE.isLoggedIn = true;
     showScreen('calendarScreen');
-    initCalendar();
+    await initCalendar();
   } else {
     loginError.textContent = '🎅 圣诞老人摇了摇头...暗号不对哦！';
     loginBox.classList.add('shake');
@@ -99,8 +129,8 @@ function handleLogin() {
 
 // ==================== 日历模块 ====================
 
-function initCalendar() {
-  loadState();
+async function initCalendar() {
+  await loadState();
   markExpiredDays(); // 标记过期日期
   renderCalendar();
   updateSidebar(); // 更新侧边栏
