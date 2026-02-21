@@ -25,7 +25,8 @@ const GitHubStorage = {
       if (!response.ok) throw new Error(`GitHub API error: ${response.status}`);
 
       const data = await response.json();
-      const content = atob(data.content.replace(/\n/g, ''));
+      // 正确处理UTF-8编码：Base64解码后再进行URI解码
+      const content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))));
       return { content, sha: data.sha };
     } catch (error) {
       console.error('GitHub Storage: 读取失败', error);
