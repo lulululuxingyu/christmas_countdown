@@ -11,10 +11,21 @@
           "isEmpty": true
         },
         "timestamp": 1771646239002
+      },
+      "2026-02-25": {
+        "gift": {
+          "title": "🎁 今日礼物",
+          "message": "",
+          "content": "💋 圣诞老人的亲亲",
+          "image": "💋",
+          "isExclusive": false,
+          "isEmpty": false
+        },
+        "timestamp": 1771986457053
       }
     },
     "usedExclusiveGifts": [],
-    "emptyCount": 1,
+    "emptyCount": 0,
     "expiredDays": {
       "2026-02-18": true,
       "2026-02-19": true,
@@ -24,6 +35,6 @@
       "2026-02-24": true
     },
     "unlockChances": 2,
-    "lastUpdated": "2026-02-25T02:27:35.766Z"
+    "lastUpdated": "2026-02-25T02:27:37.437Z"
   }
 }
