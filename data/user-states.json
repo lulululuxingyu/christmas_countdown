@@ -63,10 +63,9 @@
       "2026-02-18": true,
       "2026-02-19": true,
       "2026-02-20": true,
-      "2026-02-22": true,
-      "2026-02-26": true
+      "2026-02-22": true
     },
-    "unlockChances": 3,
-    "lastUpdated": "2026-02-27T04:04:32.135Z"
+    "unlockChances": 2,
+    "lastUpdated": "2026-02-27T04:04:36.283Z"
   }
 }
