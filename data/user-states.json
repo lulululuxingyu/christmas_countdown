@@ -55,10 +55,21 @@
           "isEmpty": true
         },
         "timestamp": 1772165070637
+      },
+      "2026-02-28": {
+        "gift": {
+          "title": "💨 今天运气不太好",
+          "message": "已经连续4次空了，再坚持3次就保底啦！",
+          "content": "什么都没有抽到...",
+          "image": "📦",
+          "isExclusive": false,
+          "isEmpty": true
+        },
+        "timestamp": 1772250980618
       }
     },
     "usedExclusiveGifts": [],
-    "emptyCount": 3,
+    "emptyCount": 4,
     "expiredDays": {
       "2026-02-18": true,
       "2026-02-19": true,
@@ -67,6 +78,6 @@
       "2026-02-26": true
     },
     "unlockChances": 2,
-    "lastUpdated": "2026-02-28T03:56:18.685Z"
+    "lastUpdated": "2026-02-28T03:56:20.999Z"
   }
 }
