@@ -99,10 +99,21 @@
           "isEmpty": true
         },
         "timestamp": 1773060789505
+      },
+      "2026-03-07": {
+        "gift": {
+          "title": "🎁 今日礼物",
+          "message": "",
+          "content": "🎬 陪你看一部电影",
+          "image": "🎬",
+          "isExclusive": false,
+          "isEmpty": false
+        },
+        "timestamp": 1773060847348
       }
     },
     "usedExclusiveGifts": [],
-    "emptyCount": 2,
+    "emptyCount": 0,
     "expiredDays": {
       "2026-02-18": true,
       "2026-02-19": true,
@@ -116,6 +127,6 @@
       "2026-03-06": true
     },
     "unlockChances": 0,
-    "lastUpdated": "2026-03-09T12:54:06.337Z"
+    "lastUpdated": "2026-03-09T12:54:07.904Z"
   }
 }
