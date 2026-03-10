@@ -176,10 +176,21 @@
           "isEmpty": true
         },
         "timestamp": 1773061027005
+      },
+      "2026-03-10": {
+        "gift": {
+          "title": "🎊 保底触发！",
+          "message": "",
+          "content": "🍰 给你做饭",
+          "image": "🍰",
+          "isExclusive": false,
+          "isEmpty": false
+        },
+        "timestamp": 1773114292617
       }
     },
     "usedExclusiveGifts": [],
-    "emptyCount": 6,
+    "emptyCount": 0,
     "expiredDays": {
       "2026-02-18": true,
       "2026-02-19": true,
@@ -187,6 +198,6 @@
       "2026-02-22": true
     },
     "unlockChances": 0,
-    "lastUpdated": "2026-03-10T03:44:48.950Z"
+    "lastUpdated": "2026-03-10T03:44:52.992Z"
   }
 }
