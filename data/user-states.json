@@ -183,9 +183,10 @@
     "expiredDays": {
       "2026-02-18": true,
       "2026-02-19": true,
-      "2026-02-20": true
+      "2026-02-20": true,
+      "2026-02-22": true
     },
     "unlockChances": 0,
-    "lastUpdated": "2026-03-09T12:57:35.607Z"
+    "lastUpdated": "2026-03-10T03:44:48.950Z"
   }
 }
