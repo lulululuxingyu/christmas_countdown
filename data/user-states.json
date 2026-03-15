@@ -223,16 +223,15 @@
       }
     },
     "usedExclusiveGifts": [],
-    "emptyCount": 2,
+    "emptyCount": 0,
     "expiredDays": {
       "2026-02-18": true,
       "2026-02-19": true,
       "2026-02-20": true,
       "2026-02-22": true,
-      "2026-03-11": true,
-      "2026-03-13": true
+      "2026-03-11": true
     },
-    "unlockChances": 0,
-    "lastUpdated": "2026-03-15T06:29:15.978Z"
+    "unlockChances": 1,
+    "lastUpdated": "2026-03-15T06:29:43.381Z"
   }
 }
