@@ -209,6 +209,17 @@
           "isEmpty": true
         },
         "timestamp": 1773556117643
+      },
+      "2026-03-14": {
+        "gift": {
+          "title": "🎁 今日礼物",
+          "message": "",
+          "content": "🤗 一个大大的拥抱",
+          "image": "🤗",
+          "isExclusive": false,
+          "isEmpty": false
+        },
+        "timestamp": 1773556155061
       }
     },
     "usedExclusiveGifts": [],
@@ -219,10 +230,9 @@
       "2026-02-20": true,
       "2026-02-22": true,
       "2026-03-11": true,
-      "2026-03-13": true,
-      "2026-03-14": true
+      "2026-03-13": true
     },
-    "unlockChances": 1,
-    "lastUpdated": "2026-03-15T06:29:11.801Z"
+    "unlockChances": 0,
+    "lastUpdated": "2026-03-15T06:29:15.978Z"
   }
 }
