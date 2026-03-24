@@ -286,10 +286,21 @@
           "isEmpty": true
         },
         "timestamp": 1774316786026
+      },
+      "2026-03-23": {
+        "gift": {
+          "title": "🎊 保底触发！",
+          "message": "",
+          "content": "👑 听你指挥一晚上",
+          "image": "👑",
+          "isExclusive": false,
+          "isEmpty": false
+        },
+        "timestamp": 1774316883533
       }
     },
     "usedExclusiveGifts": [],
-    "emptyCount": 6,
+    "emptyCount": 0,
     "expiredDays": {
       "2026-02-18": true,
       "2026-02-19": true,
@@ -300,7 +311,7 @@
       "2026-03-21": true,
       "2026-03-22": true
     },
-    "unlockChances": 0,
-    "lastUpdated": "2026-03-24T01:48:02.640Z"
+    "unlockChances": 1,
+    "lastUpdated": "2026-03-24T01:48:59.593Z"
   }
 }
