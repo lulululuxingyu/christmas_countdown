@@ -363,10 +363,23 @@
           "isEmpty": true
         },
         "timestamp": 1777452146922
+      },
+      "2026-05-05": {
+        "gift": {
+          "title": "🎊 保底触发！",
+          "message": "🥘 adv盘子一个",
+          "content": "🥘 adv盘子一个",
+          "image": "🥘",
+          "isExclusive": true,
+          "isEmpty": false
+        },
+        "timestamp": 1777973177972
       }
     },
-    "usedExclusiveGifts": [],
-    "emptyCount": 6,
+    "usedExclusiveGifts": [
+      "exclusive_4"
+    ],
+    "emptyCount": 0,
     "expiredDays": {
       "2026-02-18": true,
       "2026-02-19": true,
@@ -413,6 +426,6 @@
       "2026-05-04": true
     },
     "unlockChances": 0,
-    "lastUpdated": "2026-05-05T09:26:06.075Z"
+    "lastUpdated": "2026-05-05T09:26:18.618Z"
   }
 }
