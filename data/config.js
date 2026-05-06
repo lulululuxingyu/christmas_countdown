@@ -39,6 +39,12 @@ const CONFIG = {
       name: "💍 戒指！",
       content: "💍 嫁给我吧！",
       image: "💍"
+    },
+    {
+      id: "exclusive_6",
+      name: "🧸 Jellycat 玩偶一只！",
+      content: "🧸 获得 Jellycat 玩偶一只！",
+      image: "🧸"
     }
   ],
 
@@ -66,6 +72,7 @@ const CONFIG = {
       message: "感谢我们一起走过的两年!"
     },
     "2026-09-16": {
+      giftId: "exclusive_6",
       title: "🎂 生日快乐!",
       message: "感谢我们一起走过的两年!"
     },
@@ -76,5 +83,11 @@ const CONFIG = {
   },
 
   // 贵重礼物抽取概率（10%）
-  exclusiveGiftProbability: 0.1
+  exclusiveGiftProbability: 0.1,
+
+  // 保底机制配置
+  pity: {
+    threshold: 9,   // 连续 9 次空礼物后，第 10 次必中（emptyCount >= threshold 时触发）
+    hitRate: 0.18   // 基础中奖率
+  }
 };

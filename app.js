@@ -384,13 +384,17 @@ function handleDayClick(dateStr, element) {
 }
 
 function getGiftForDate(dateStr) {
-  // 1. 检查是否是特殊日期（特殊日期不计入保底机制）
+  // 1. 特殊日期：不计入保底，固定走专属分支
   if (CONFIG.specialDays[dateStr]) {
     const special = CONFIG.specialDays[dateStr];
-    const exclusiveGift = CONFIG.exclusiveGifts.find(g => g.id === special.giftId);
+    const exclusiveGift = special.giftId
+      ? CONFIG.exclusiveGifts.find(g => g.id === special.giftId)
+      : null;
 
     if (exclusiveGift) {
-      STATE.usedExclusiveGifts.push(exclusiveGift.id);
+      if (!STATE.usedExclusiveGifts.includes(exclusiveGift.id)) {
+        STATE.usedExclusiveGifts.push(exclusiveGift.id);
+      }
       return {
         title: special.title,
         message: special.message,
@@ -400,31 +404,41 @@ function getGiftForDate(dateStr) {
         isEmpty: false
       };
     }
+
+    // 没绑定 giftId（或 giftId 找不到）：发普通礼物，但保留特殊标题/文案
+    const commonGift = CONFIG.commonGifts[Math.floor(Math.random() * CONFIG.commonGifts.length)];
+    return {
+      title: special.title,
+      message: special.message,
+      content: commonGift.content,
+      image: commonGift.image,
+      isExclusive: false,
+      isEmpty: false
+    };
   }
 
-  // 2. 保底机制：连续6次空礼物后，第7次必中
-  const isGuaranteed = STATE.emptyCount >= 6;
-
-  // 3. 判断是否抽中礼物
-  const random = Math.random();
-  const shouldGetGift = isGuaranteed || random < 0.1; // 保底或10%概率
+  // 2. 保底判断
+  const isGuaranteed = STATE.emptyCount >= CONFIG.pity.threshold;
+  const shouldGetGift = isGuaranteed || Math.random() < CONFIG.pity.hitRate;
 
   if (shouldGetGift) {
-    // 重置空礼物计数
     STATE.emptyCount = 0;
 
-    // 优先从贵重礼物池抽取
+    // 贵重礼物池：排除已用的 + 已被特殊日期预留的
+    const reservedIds = new Set(
+      Object.values(CONFIG.specialDays).map(s => s.giftId).filter(Boolean)
+    );
     const availableExclusive = CONFIG.exclusiveGifts.filter(
-      g => !STATE.usedExclusiveGifts.includes(g.id)
+      g => !STATE.usedExclusiveGifts.includes(g.id) && !reservedIds.has(g.id)
     );
 
-    if (availableExclusive.length > 0 && Math.random() < 0.3) {
-      // 30%概率抽取贵重礼物
+    // 保底固定给普通礼物；只有自然命中才有 30% 抽贵重
+    if (!isGuaranteed && availableExclusive.length > 0 && Math.random() < 0.3) {
       const gift = availableExclusive[Math.floor(Math.random() * availableExclusive.length)];
       STATE.usedExclusiveGifts.push(gift.id);
 
       return {
-        title: isGuaranteed ? '🎊 保底触发！' : '🎉 恭喜抽中贵重礼物！',
+        title: '🎉 恭喜抽中贵重礼物！',
         message: gift.name,
         content: gift.content,
         image: gift.image,
@@ -433,7 +447,6 @@ function getGiftForDate(dateStr) {
       };
     }
 
-    // 普通礼物
     const commonGift = CONFIG.commonGifts[Math.floor(Math.random() * CONFIG.commonGifts.length)];
     return {
       title: isGuaranteed ? '🎊 保底触发！' : '🎁 今日礼物',
@@ -443,19 +456,19 @@ function getGiftForDate(dateStr) {
       isExclusive: false,
       isEmpty: false
     };
-  } else {
-    // 空礼物
-    STATE.emptyCount++;
-
-    return {
-      title: '💨 今天运气不太好',
-      message: `已经连续${STATE.emptyCount}次空了，再坚持${7 - STATE.emptyCount}次就保底啦！`,
-      content: '什么都没有抽到...',
-      image: '📦',
-      isExclusive: false,
-      isEmpty: true
-    };
   }
+
+  // 空礼物
+  STATE.emptyCount++;
+  const remaining = CONFIG.pity.threshold + 1 - STATE.emptyCount;
+  return {
+    title: '💨 今天运气不太好',
+    message: `已经连续${STATE.emptyCount}次空了，再坚持${remaining}次就保底啦！`,
+    content: '什么都没有抽到...',
+    image: '📦',
+    isExclusive: false,
+    isEmpty: true
+  };
 }
 
 // ==================== UI交互 ====================
@@ -473,7 +486,7 @@ function updateSidebar() {
   // 更新统计数据
   document.getElementById('sidebarOpenedCount').textContent = openedDates.length;
   document.getElementById('sidebarExclusiveCount').textContent = exclusiveCount;
-  document.getElementById('sidebarPityCount').textContent = `${STATE.emptyCount}/7`;
+  document.getElementById('sidebarPityCount').textContent = `${STATE.emptyCount}/${CONFIG.pity.threshold + 1}`;
   document.getElementById('sidebarUnlockChances').textContent = STATE.unlockChances;
 
   // 更新礼物列表
@@ -549,7 +562,7 @@ function showRecordModal() {
   const exclusiveCount = STATE.usedExclusiveGifts.length;
 
   openedCountEl.textContent = openedDates.length;
-  emptyCountDisplayEl.textContent = `${STATE.emptyCount}/7`;
+  emptyCountDisplayEl.textContent = `${STATE.emptyCount}/${CONFIG.pity.threshold + 1}`;
   exclusiveCountEl.textContent = exclusiveCount;
 
   // 生成记录列表
@@ -747,7 +760,7 @@ window.adminPanel = {
   getState: () => {
     console.log('当前状态：', {
       已开启天数: Object.keys(STATE.openedDays).length,
-      保底进度: `${STATE.emptyCount}/7`,
+      保底进度: `${STATE.emptyCount}/${CONFIG.pity.threshold + 1}`,
       已用贵重礼物: STATE.usedExclusiveGifts,
       详细记录: STATE.openedDays
     });
@@ -811,7 +824,7 @@ window.adminPanel = {
       console.log(`${dateDisplay} [${r.status}] ${giftType} - ${r.gift.content}`);
     });
 
-    console.log(`\n当前保底进度: ${STATE.emptyCount}/7`);
+    console.log(`\n当前保底进度: ${STATE.emptyCount}/${CONFIG.pity.threshold + 1}`);
     console.log(`已用贵重礼物: ${STATE.usedExclusiveGifts.length}/${CONFIG.exclusiveGifts.length}`);
 
     if (STATE.isLoggedIn) {
