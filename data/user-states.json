@@ -385,12 +385,23 @@
           "isEmpty": true
         },
         "timestamp": 1777973330438
+      },
+      "2026-05-08": {
+        "gift": {
+          "title": "🎁 今日礼物",
+          "message": "",
+          "content": "🏃 周末一起出去约会吧",
+          "image": "🏃",
+          "isExclusive": false,
+          "isEmpty": false
+        },
+        "timestamp": 1778207989622
       }
     },
     "usedExclusiveGifts": [
       "exclusive_4"
     ],
-    "emptyCount": 1,
+    "emptyCount": 0,
     "expiredDays": {
       "2026-02-18": true,
       "2026-02-19": true,
@@ -438,6 +449,6 @@
       "2026-05-07": true
     },
     "unlockChances": 0,
-    "lastUpdated": "2026-05-08T02:39:06.780Z"
+    "lastUpdated": "2026-05-08T02:39:50.314Z"
   }
 }
